@@ -3,25 +3,27 @@ import Options from './Options';
 
 class Game extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
   }
 
-  render() {
-    console.log(this.props.question)
-    let options = this.props.question.incorrect_answers.slice(0);
-    options.push(this.props.question.correct_answer);
+  renderCircles() {
+    let circles = [];
+    console.log(this.props.currentNumber);
+    for (let i = 1; i <= this.props.numQuestions; i++) {
+      if (i === this.props.currentNumber) circles.push(<div className="current" key={i}>{i}</div>);
+      else if (i > this.props.currentNumber) circles.push(<div key={i}>{i}</div>);
+      else circles.push(<div className="past" key={i}>{i}</div>);
+    }
+    return circles;
+  }
 
+
+  render() {
     return (
       <div>
         <div className="qpointer">
-          {() => {
-            let circles;
-            for (let i = 1; i <= this.props.numQuestions; i++) {
-              circles += <div key={i}>{i}</div>
-            }
-            return circles;
-          }}
+          {this.renderCircles()}
         </div>
 
         <div>
@@ -29,7 +31,7 @@ class Game extends React.Component {
           <p>{this.props.question.question}</p>
 
           <div>
-          <Options options={options} submitAnswer={this.props.submitAnswer} question={this.props.question}/>
+            <Options options={this.props.currentOptions} submitAnswer={this.props.submitAnswer} question={this.props.question}/>
           </div>
         </div>
       </div>

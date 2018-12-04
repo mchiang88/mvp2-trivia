@@ -5,7 +5,6 @@ class Options extends React.Component {
     super(props);
 
     this.state = {
-      opts: [],
       selected: ''
     }
     
@@ -16,22 +15,12 @@ class Options extends React.Component {
     this.setState({selected: e.target.value});
   }
 
-  componentWillMount() {
-    let opts = [];
-    let options = this.props.options.slice(0);
-    while (options.length) {
-      let rand = Math.floor(Math.random() * options.length);
-      opts.push(options.splice(rand, 1)[0]);
-    }
-    this.setState({ opts });
-  }
-
   render() {
     return (
       <div>
-        {this.state.opts.map((option, i) => (
+        {this.props.options.map((option, i) => (
           <div className="options">
-            <input type="radio" value={option} key={i} name="options" onChange={this.handleChange}></input>
+            <input type="radio" value={option} key={i} name="options" onChange={this.handleChange} checked={this.state.selected == option}></input>
             <label for={option}>{option}</label>
           </div>
         ))}

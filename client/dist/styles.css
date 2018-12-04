@@ -12,6 +12,14 @@
   font: 26px Arial;
 }
 
+.current {
+  background-color: red !important;
+}
+
+.past {
+  background-color: grey !important;
+}
+
 .qpointer {
   width: 100%;
   display: inline-block;
