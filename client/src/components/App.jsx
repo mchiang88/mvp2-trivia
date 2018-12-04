@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import GameSettings from './GameSettings';
 import Game from './Game';
+import Scoreboard from './ResultScreen';
 import sample from './sample';
 
 class App extends React.Component {
@@ -59,9 +60,12 @@ class App extends React.Component {
     this.setState({currentOptions});
   }
 
-  submitAnswer(current, answer) {
+  submitAnswer(current, answer, options) {
     current.answered = answer;
+    current.options = options;
+
     let cNumber = this.state.currentNumber;
+
     this.setState({
       submissions: [...this.state.submissions, current]
     }, () => console.log(this.state.submissions));
@@ -83,7 +87,7 @@ class App extends React.Component {
   render() {
     if (this.state.gameStarted) {
       if (this.state.gameEnded) {
-        return 
+        return <Scoreboard submissions={this.state.submissions} />
       }
       else {
         return (<Game 

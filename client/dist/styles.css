@@ -30,3 +30,25 @@
 .options {
   margin-bottom: 3px;
 }
+
+.check {
+  color: green;
+}
+
+.wrong {
+  color: red;
+}
+
+.user-answer-correct {
+  color: green;
+  font-weight: bold;
+}
+
+.user-answer {
+  color: red;
+}
+
+.correct-answer {
+  font-weight: bold;
+  color: green;
+}

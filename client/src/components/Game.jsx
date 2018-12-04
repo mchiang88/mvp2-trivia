@@ -9,7 +9,6 @@ class Game extends React.Component {
 
   renderCircles() {
     let circles = [];
-    console.log(this.props.currentNumber);
     for (let i = 1; i <= this.props.numQuestions; i++) {
       if (i === this.props.currentNumber) circles.push(<div className="current" key={i}>{i}</div>);
       else if (i > this.props.currentNumber) circles.push(<div key={i}>{i}</div>);

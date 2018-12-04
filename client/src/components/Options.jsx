@@ -24,7 +24,7 @@ class Options extends React.Component {
             <label for={option}>{option}</label>
           </div>
         ))}
-        <button onClick={() => this.props.submitAnswer(this.props.question, this.state.selected)}>Submit Answer</button>
+        <button onClick={() => this.props.submitAnswer(this.props.question, this.state.selected, this.props.options)}>Submit Answer</button>
       </div>
     )
   }
