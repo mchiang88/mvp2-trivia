@@ -30,6 +30,7 @@ class GameSettings extends React.Component {
         <h3>Game Settings:</h3>
         <form onSubmit={this.disableEnter}>
           <label for="trivia_amount">Number of Questions:</label>
+          &nbsp;&nbsp;
           <input 
             type="number" 
             name="trivia_amount" 
@@ -41,6 +42,7 @@ class GameSettings extends React.Component {
           </input>
           <br />
           <label for="trivia_category">Select Category:</label>
+          &nbsp;&nbsp;
           <select name="trivia_category" onChange={this.handleChange}>
 			      <option value="any">Any Category</option>
 		      	<option value="9">General Knowledge</option>
@@ -70,6 +72,7 @@ class GameSettings extends React.Component {
           </select>
           <br />
           <label for="trivia_difficulty">Select Difficulty:</label>
+          &nbsp;&nbsp;
           <select name="trivia_difficulty" onChange={this.handleChange}>
             <option value="any">Any Difficulty</option>
             <option value="easy">Easy</option>
