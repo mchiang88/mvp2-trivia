@@ -17,7 +17,7 @@ class GameSettings extends React.Component {
   handleChange(e) {
     this.setState({
       [e.target.name]: e.target.value
-    }, () => console.log(this.state))
+    })
   }
 
   disableEnter(e) {
@@ -76,6 +76,8 @@ class GameSettings extends React.Component {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
+          <br />
+          <button onClick={() => this.props.handleSubmit(this.state)}>Start game</button>
         </form>
       </div>)
   }
