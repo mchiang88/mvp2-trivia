@@ -79,8 +79,8 @@ class GameSettings extends React.Component {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
-          <br />
-          <button onClick={() => this.props.handleSubmit(this.state)}>Start game</button>
+          <br /><br />
+          <button className="start" onClick={() => this.props.handleSubmit(this.state)}>Start game</button>
         </form>
       </div>)
   }
