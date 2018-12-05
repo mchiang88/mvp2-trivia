@@ -4,7 +4,6 @@ import axios from 'axios';
 import GameSettings from './GameSettings';
 import Game from './Game';
 import Scoreboard from './ResultScreen';
-import sample from './sample';
 
 class App extends React.Component {
   constructor(props) {
@@ -18,7 +17,8 @@ class App extends React.Component {
       gameStarted: false,
       gameEnded: false,
       submissions: [],
-      selected: ''
+      selected: '',
+      error: false
     };
 
     this.handleSubmitSettings = this.handleSubmitSettings.bind(this);
@@ -32,20 +32,19 @@ class App extends React.Component {
     if (opts.trivia_difficulty !== 'any') url += `&difficulty=${opts.trivia_difficulty}`;
     url += '&type=multiple';
 
-    this.setState({
-      questions: sample, 
-      currentQuestion: sample[0], 
-      gameStarted: true
-    }, this.updateOptions);
-
-    
-
-    // axios.get(url)
-    //   .then(data => this.setState({
-    //     questions: data.data.results,
-    //     gameStarted: true
-    //   }, () => console.log(this.state.questions)))
-    //   .catch(err => console.error(err))
+    axios.get(url)
+      .then(data => {
+        if (data.data.response_code === 1 || data.data.response_code === 2) {
+          this.setState({error: true});
+        }
+        else {
+        this.setState({
+          questions: data.data.results,
+          currentQuestion: data.data.results[0],
+          gameStarted: true
+        }, this.updateOptions)}
+      })
+      .catch(err => console.error(err))
   }
 
   updateOptions() {
@@ -68,7 +67,7 @@ class App extends React.Component {
 
     this.setState({
       submissions: [...this.state.submissions, current]
-    }, () => console.log(this.state.submissions));
+    });
     if (cNumber === this.state.questions.length) {
       this.setState({
         gameEnded: true
@@ -100,6 +99,12 @@ class App extends React.Component {
       }
     } 
     else {
+      if (this.state.error) return (
+        <div>
+          <div className="error">Please retry, could not get results from database for previous game selection</div>
+          <GameSettings handleSubmit={this.handleSubmitSettings}/>
+        </div>
+      )
       return <GameSettings handleSubmit={this.handleSubmitSettings}/>;
     }
     

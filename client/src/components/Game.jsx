@@ -1,6 +1,8 @@
 import React from 'react';
 import Options from './Options';
 
+import entities from './entities';
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +29,7 @@ class Game extends React.Component {
 
         <div>
           <h3>Question {this.props.currentNumber}:</h3>
-          <p>{this.props.question.question}</p>
+          <p>{this.props.question.question.replace(/&#?\w+;/g, match => entities[match])}</p>
 
           <div>
             <Options options={this.props.currentOptions} submitAnswer={this.props.submitAnswer} question={this.props.question}/>

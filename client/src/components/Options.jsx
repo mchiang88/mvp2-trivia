@@ -1,4 +1,5 @@
 import React from 'react';
+import entities from './entities';
 
 class Options extends React.Component {
   constructor(props) {
@@ -20,10 +21,13 @@ class Options extends React.Component {
       <div>
         {this.props.options.map((option, i) => (
           <div className="options">
-            <input type="radio" value={option} key={i} name="options" onChange={this.handleChange} checked={this.state.selected == option}></input>
-            <label for={option}>{option}</label>
+            <label>
+              <input className="option-radio" type="radio" value={option} key={i} name="options" onChange={this.handleChange} checked={this.state.selected == option}></input>
+              {option.replace(/&#?\w+;/g, match => entities[match])}
+            </label>
           </div>
         ))}
+        <br /><br />
         <button className="next" onClick={() => this.props.submitAnswer(this.props.question, this.state.selected, this.props.options)}>Submit Answer</button>
       </div>
     )
