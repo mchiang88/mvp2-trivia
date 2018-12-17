@@ -19,7 +19,7 @@ const ResultScreen = (props) => {
     }
     else results.push(<div>
       <h3><div className="wrong">&#10008;</div> Question {i+1}:</h3>
-      <p>{sub.question.replace(/&#?\w+;/g, match => entities[match])}</p>
+      <p>{sub.question}</p>
       <Answers sub={sub} />
     </div>)
   })

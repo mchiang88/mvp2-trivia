@@ -1,0 +1,5 @@
+webpack.config.js
+client/src
+client/src/**/*
+database
+node_modules

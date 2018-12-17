@@ -5,6 +5,8 @@ import GameSettings from './GameSettings';
 import Game from './Game';
 import Scoreboard from './ResultScreen';
 
+import entities from './entities';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -34,15 +36,32 @@ class App extends React.Component {
 
     axios.get(url)
       .then(data => {
+        const replacer = match => {
+          if (entities[match]) return entities[match];
+          else console.log(match);
+        };
+
         if (data.data.response_code === 1 || data.data.response_code === 2) {
           this.setState({error: true});
         }
         else {
-        this.setState({
-          questions: data.data.results,
-          currentQuestion: data.data.results[0],
-          gameStarted: true
-        }, this.updateOptions)}
+          let questions = data.data.results;
+
+          questions.forEach((item) => {
+            item.incorrect_answers.forEach((inc, ii) => {
+              item.incorrect_answers[ii] = inc.replace(/&#?\w+;/g, replacer);
+            item.question = item.question.replace(/&#?\w+;/g, replacer);
+            item.correct_answer = item.correct_answer.replace(/&#?\w+;/g, replacer);
+            });
+          });
+
+          console.log(questions);
+
+          this.setState({
+            questions: questions,
+            currentQuestion: questions[0],
+            gameStarted: true
+          }, this.updateOptions)}
       })
       .catch(err => console.error(err))
   }
