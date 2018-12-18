@@ -55,8 +55,6 @@ class App extends React.Component {
             });
           });
 
-          console.log(questions);
-
           this.setState({
             questions: questions,
             currentQuestion: questions[0],
