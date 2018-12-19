@@ -26,11 +26,13 @@ const ResultScreen = (props) => {
 
   return (
     <div>
+      <button className="newgame" onClick={props.newGame} >New game</button>
       <h3>Your Score:
         <br />
         Correct {numCorrect} / {numQuestions}
       </h3>
       {results.map((q, i) => <div>{q}</div>)}
+      <button className="newgame" onClick={props.newGame} >New game</button>
     </div>
   )
 }

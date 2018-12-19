@@ -3,9 +3,10 @@ import axios from 'axios';
 
 import GameSettings from './GameSettings';
 import Game from './Game';
-import Scoreboard from './ResultScreen';
+import ResultScreen from './ResultScreen';
 
 import entities from './entities';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class App extends React.Component {
     this.handleSubmitSettings = this.handleSubmitSettings.bind(this);
     this.submitAnswer = this.submitAnswer.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
+    this.newGame = this.newGame.bind(this);
   }
 
   handleSubmitSettings(opts) {
@@ -76,6 +78,19 @@ class App extends React.Component {
     this.setState({currentOptions});
   }
 
+  newGame() {
+    this.setState({
+      questions: [],
+      currentNumber: 1,
+      currentQuestion: '',
+      currentOptions: [],
+      gameStarted: false,
+      gameEnded: false,
+      submissions: [],
+      selected: ''
+    }, () => console.log('new game'));
+  }
+
   submitAnswer(current, answer, options) {
     current.answered = answer;
     current.options = options;
@@ -103,7 +118,7 @@ class App extends React.Component {
   render() {
     if (this.state.gameStarted) {
       if (this.state.gameEnded) {
-        return <Scoreboard submissions={this.state.submissions} />
+        return <ResultScreen submissions={this.state.submissions} newGame={this.newGame}/>
       }
       else {
         return (<Game 

@@ -5,7 +5,7 @@ class GameSettings extends React.Component {
     super(props);
 
     this.state = {
-      trivia_amount: 10,
+      trivia_amount: 5,
       trivia_category: 'any',
       trivia_difficulty: 'any'
     }

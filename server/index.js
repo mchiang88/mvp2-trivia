@@ -22,7 +22,15 @@ const server = app.listen(port, () => console.log(`server listening on ${port}`)
 // SOCKET SETUP
 const io = socket(server);
 
-io.on('connection', function(socket) {
-  console.log('made socket connection: ', socket.id);
+io.on('connection', function(client) {
+  console.log(`made client connection: ${client.id}`);
 
-})
+  client.on('disconnect', () => console.log(`${client.id} has disconnected`));
+
+  client.on('subscribeTimer', interval => {
+    console.log(`${client.id} has subscribed to timer with interval: ${interval} ms`);
+    setInterval(() => {
+      client.emit('timer', new Date());
+    }, interval);
+  })
+});
