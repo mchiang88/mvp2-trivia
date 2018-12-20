@@ -1,6 +1,5 @@
 import React from 'react';
 import Answers from './Answers';
-import entities from './entities';
 
 const ResultScreen = (props) => {
   let numQuestions = props.submissions.length;
