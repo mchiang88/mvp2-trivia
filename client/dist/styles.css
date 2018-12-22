@@ -22,18 +22,26 @@ h1, h2, h3, h4, h5, h6 {
   float: left;
 }
 
+.option-radio {
+  width: 20px;
+  height: 20px;
+}
+
+.joingame {
+  width: 100px;
+  float: right;
+  border-radius: 25px;
+}
+
 button {
   width: 250px;
   border: none;
   background-color: #008CBA;
   margin-right: 10px;
+  margin-top: 10px;
   padding: 15px 30px;
   cursor: pointer;
-}
-
-.option-radio {
-  width: 20px;
-  height: 20px;
+  outline: none;
 }
 
 button:hover {
@@ -44,10 +52,17 @@ button:hover {
   color: white;
 }
 
+.lobbyitem {
+  background-color: white;
+  width: 300px;
+  padding: 5px;
+  border: 1px solid #008CBA;
+  margin-top: 5px;
+}
+
 .qpointer {
   width: 660px;
   margin: 0 auto;
-  /* display: inline-block; */
   text-align: center;
   vertical-align: middle;
 }

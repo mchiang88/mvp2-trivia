@@ -1,4 +1,4 @@
-const { Results } = require('../database/models');
+// const { Results } = require('../database/models');
 
 module.exports = {
   get: () => console.log('controller handling GET'),

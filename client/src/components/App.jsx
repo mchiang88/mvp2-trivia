@@ -163,7 +163,7 @@ class App extends React.Component {
       }
     }
     else if (this.state.mode === 'multi') {
-      return <MultiLobby />
+      return <MultiLobby username={this.state.username}/>
     }
   }
 }

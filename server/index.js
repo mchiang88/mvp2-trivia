@@ -19,18 +19,56 @@ app.use('/api', router);
 
 const server = app.listen(port, () => console.log(`server listening on ${port}`));
 
+// HANDLING GAMES & USERS
+const usersList = [];
+const openLobbies = [
+  {
+    gameId: 123,
+    creator: 'Benjo',
+    players: [],
+    maxPlayers: 4
+  },
+  {
+    gameId: 234,
+    creator: 'Frankie',
+    players: ['Todd', 'Joe'],
+    maxPlayers: 4
+  }
+];
+const currentGames = [];
+
+
 // SOCKET SETUP
 const io = socket(server);
 
-io.on('connection', function(client) {
+io.on('connection', client => {
+  let name = client.id;
   console.log(`made client connection: ${client.id}`);
+  
+  client.on('createUser', username => {
+    name = username;
+    if (!usersList.includes(name)) usersList.push(name);
+    console.log(`${name} created`); 
+  });
 
-  client.on('disconnect', () => console.log(`${client.id} has disconnected`));
+  io.sockets.connected[`${client.id}`].emit('lobbylist', openLobbies);
+
+  client.on('disconnect', () => console.log(`${client.id} (${name}) has disconnected`));
 
   client.on('subscribeTimer', interval => {
     console.log(`${client.id} has subscribed to timer with interval: ${interval} ms`);
     setInterval(() => {
       client.emit('timer', new Date());
     }, interval);
-  })
+  });
+
+
+  
 });
+
+// const nsp = io.of('/lobbies');
+
+// nsp.on('connection', nspclient => {
+//   console.log('connection into lobbies accepted');
+  
+// });
