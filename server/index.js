@@ -21,20 +21,23 @@ const server = app.listen(port, () => console.log(`server listening on ${port}`)
 
 // HANDLING GAMES & USERS
 const usersList = [];
-const openLobbies = [
-  {
-    gameId: 123,
+const openLobbies = {
+  123: {
     creator: 'Benjo',
     players: [],
     maxPlayers: 4
   },
-  {
-    gameId: 234,
+  abdie3: {
     creator: 'Frankie',
     players: ['Todd', 'Joe'],
     maxPlayers: 4
+  },
+  345: {
+    creator: 'John',
+    players: ['one', 'two', 'three'],
+    maxPlayers: 4
   }
-];
+};
 const currentGames = [];
 
 

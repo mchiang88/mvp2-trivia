@@ -21,8 +21,17 @@ class MultiLobby extends React.Component {
     });
 
     this.state = {
-      lobbies: []
+      lobbies: {}
     }
+  }
+
+  populateLobbies() {
+    let lobbiesArray = [];
+    for (let lobby in this.state.lobbies) {
+      console.log(lobby)
+      lobbiesArray.push(<LobbyListItem lobby={this.state.lobbies[lobby]} key={lobby}/>)
+    }
+    return lobbiesArray;
   }
 
   render() {
@@ -31,9 +40,7 @@ class MultiLobby extends React.Component {
         Multiplayer Lobby
 
         <h3>Available Lobbies</h3>
-        {this.state.lobbies.map((item, i) => {
-          return <LobbyListItem lobby={item} key={i} />
-        })}
+        {this.populateLobbies()}
         
       </div>
     )
