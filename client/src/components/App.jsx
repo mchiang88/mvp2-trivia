@@ -162,10 +162,10 @@ class App extends React.Component {
         if (this.state.error) return (
           <div>
             <div className="error">Please retry, could not get results from database for previous game selection</div>
-            <GameSettings handleSubmit={this.handleSubmitSettings}/>
+            <GameSettings handleSubmit={this.handleSubmitSettings} isMultiplayer={false} />
           </div>
         )
-        return <GameSettings handleSubmit={this.handleSubmitSettings}/>;
+        return <GameSettings handleSubmit={this.handleSubmitSettings} isMultiplayer={false} />;
       }
     }
     else if (this.state.mode === 'multi') {

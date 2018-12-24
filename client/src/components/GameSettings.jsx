@@ -7,11 +7,14 @@ class GameSettings extends React.Component {
     this.state = {
       trivia_amount: 5,
       trivia_category: 'any',
-      trivia_difficulty: 'any'
+      trivia_difficulty: 'any',
+      time_per_question: 15,
+      max_players: 2
     }
 
     this.handleChange = this.handleChange.bind(this);
     this.disableEnter = this.disableEnter.bind(this);
+    this.checkMultiplayer = this.checkMultiplayer.bind(this);
   }
 
   handleChange(e) {
@@ -24,22 +27,51 @@ class GameSettings extends React.Component {
     e.preventDefault(); 
   }
 
+  checkMultiplayer(isMultiplayer) {
+    if (isMultiplayer) return (
+      <div>
+          <br />
+          <label htmlFor="time_per_question">Time per question (0 = no timer, max = 30 sec):</label>
+          &nbsp;&nbsp;
+          <input
+            type="number"
+            name="time_per_question"
+            min="1"
+            max="30"
+            value={this.state.time_per_question}
+            onChange={this.handleChange}>
+          </input>
+          <br />
+          <label htmlFor="max_players">Max players (max = 4):</label>
+          &nbsp;&nbsp;
+          <input
+            type="number"
+            name="max_players"
+            min="1"
+            max="4"
+            value={this.state.max_players}
+            onChange={this.handleChange}>
+          </input>
+      </div>
+    )
+  }
+
   render() {
     return (
       <div>
         <h3>Game Settings:</h3>
         <form onSubmit={this.disableEnter}>
-          <label htmlFor="trivia_amount">Number of Questions:</label>
+          <label htmlFor="trivia_amount">Number of Questions (Max = 50):</label>
           &nbsp;&nbsp;
           <input 
             type="number" 
             name="trivia_amount" 
-            id="trivia_amount" 
             min="1" 
             max="50" 
             value={this.state.trivia_amount} 
             onChange={this.handleChange}>
           </input>
+          
           <br />
           <label htmlFor="trivia_category">Select Category:</label>
           &nbsp;&nbsp;
@@ -70,6 +102,7 @@ class GameSettings extends React.Component {
             <option value="30">Science: Gadgets</option>
             <option value="19">Science: Mathematics</option>
           </select>
+
           <br />
           <label htmlFor="trivia_difficulty">Select Difficulty:</label>
           &nbsp;&nbsp;
@@ -79,6 +112,8 @@ class GameSettings extends React.Component {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
+
+          {this.checkMultiplayer(this.props.isMultiplayer)}
           <br /><br />
           <button className="start" onClick={() => this.props.handleSubmit(this.state)}>Start game</button>
         </form>
