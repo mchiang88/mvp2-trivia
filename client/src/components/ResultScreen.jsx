@@ -30,7 +30,7 @@ const ResultScreen = (props) => {
         <br />
         Correct {numCorrect} / {numQuestions}
       </h3>
-      {results.map((q, i) => <div>{q}</div>)}
+      {results.map((q, i) => <div key={i}>{q}</div>)}
       <button className="newgame" onClick={props.newGame} >New game</button>
     </div>
   )

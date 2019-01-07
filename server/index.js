@@ -3,8 +3,10 @@ const path = require('path');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const socket = require('socket.io');
+const axios = require('axios');
 
 const router = require('./router');
+const entities = require('./entities');
 
 const app = express();
 const port = 1128;
@@ -21,21 +23,35 @@ const server = app.listen(port, () => console.log(`server listening on ${port}`)
 
 // HANDLING GAMES & USERS
 const usersList = [];
+let gameId = 678;
+
 const openLobbies = {
   123: {
     creator: 'Benjo',
     players: [],
+    nQuestions: 5,
+    difficulty: 'hard',
+    category: 'any',
+    time_per_question: 30,
     maxPlayers: 4
   },
   abdie3: {
     creator: 'Frankie',
     players: ['Todd', 'Joe'],
+    nQuestions: 5,
+    difficulty: 'any',
+    category: 'any',
+    time_per_question: 10,
     maxPlayers: 4
   },
   345: {
     creator: 'John',
-    players: ['one', 'two', 'three'],
-    maxPlayers: 4
+    players: [],
+    nQuestions: 5,
+    difficulty: 'easy',
+    category: 'any',
+    time_per_question: 5,
+    maxPlayers: 2
   }
 };
 const currentGames = [];
@@ -65,6 +81,59 @@ io.on('connection', client => {
     }, interval);
   });
 
+  client.on('createLobby', ({ 
+    trivia_amount: nQuestions, 
+    trivia_category: category, 
+    trivia_difficulty: difficulty,
+    max_players: maxPlayers,
+    time_per_question,
+    username: username
+  }) => {
+    let url = `https://opentdb.com/api.php?amount=${nQuestions}`;
+    if (category !== 'any') url += `&category=${category}`;
+    if (difficulty !== 'any') url += `&difficulty=${difficulty}`;
+    url += '&type=multiple';
+
+    axios.get(url)
+      .then(data => {
+        const replacer = match => {
+          if (entities[match]) return entities[match];
+          else console.log(match);
+        };
+
+        if (data.data.response_code === 1 || data.data.response_code === 2) {
+          io.sockets.connected[`${client.id}`].emit('apiError');
+        }
+        else {
+          let questions = data.data.results;
+
+          questions.forEach((item) => {
+            item.incorrect_answers.forEach((inc, ii) => {
+              item.incorrect_answers[ii] = inc.replace(/&#?\w+;/g, replacer);
+            item.question = item.question.replace(/&#?\w+;/g, replacer);
+            item.correct_answer = item.correct_answer.replace(/&#?\w+;/g, replacer);
+            });
+          });
+
+          gameId += 1;
+
+          openLobbies[gameId] = {
+            creator: username,
+            players: [],
+            nQuestions,
+            difficulty,
+            category,
+            time_per_question,
+            maxPlayers,
+            questions
+          }
+          
+          io.sockets.connected[`${client.id}`].emit('createdLobby', openLobbies[gameId]);
+          io.emit('lobbylist', openLobbies);
+        }
+      })
+      .catch(err => console.error(err))
+  });
 
   
 });

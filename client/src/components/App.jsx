@@ -16,7 +16,10 @@ class App extends React.Component {
 
     this.state = {
       username: '',
+      socket: false,
       mode: false,
+      creatingLobby: false,
+      inLobby: false,
       questions: [],
       currentNumber: 1,
       currentQuestion: '',
@@ -28,22 +31,30 @@ class App extends React.Component {
       error: false
     };
 
+    this.updateState = this.updateState.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmitSettings = this.handleSubmitSettings.bind(this);
+    this.handleSingleSubmit = this.handleSingleSubmit.bind(this);
+    this.handleMultiSubmit = this.handleMultiSubmit.bind(this);
     this.submitAnswer = this.submitAnswer.bind(this);
     this.updateOptions = this.updateOptions.bind(this);
     this.newGame = this.newGame.bind(this);
     this.setMode = this.setMode.bind(this);
   }
 
+  updateState(state, value) {
+    this.setState({
+      [state]: value
+    });
+  }
+
   handleChange(e) {
     this.setState({
       [e.target.name]: e.target.value
-    })
+    });
   }
 
-  handleSubmitSettings({ 
-    trivia_category: nQuestions, 
+  handleSingleSubmit({ 
+    trivia_amount: nQuestions, 
     trivia_category: category, 
     trivia_difficulty: difficulty 
   }) {
@@ -53,6 +64,7 @@ class App extends React.Component {
     if (category !== 'any') url += `&category=${category}`;
     if (difficulty !== 'any') url += `&difficulty=${difficulty}`;
     url += '&type=multiple';
+
 
     axios.get(url)
       .then(data => {
@@ -78,10 +90,28 @@ class App extends React.Component {
           this.setState({
             questions: questions,
             currentQuestion: questions[0],
+            error: false,
             gameStarted: true
           }, this.updateOptions)}
       })
       .catch(err => console.error(err))
+  }
+
+  handleMultiSubmit(settings) {
+    settings.username = this.state.username;
+    this.state.socket.emit('createLobby', settings);
+
+    this.state.socket.on('apiError', () => {
+      this.setState({error: true})
+    });
+
+    this.state.socket.on('createdLobby', (lobby) => {
+      this.setState({
+        error: false,
+        creatingLobby: false,
+        inLobby: 'host'
+      })
+    })
   }
 
   updateOptions() {
@@ -137,7 +167,6 @@ class App extends React.Component {
         currentQuestion: this.state.questions[cNumber]
       }, this.updateOptions);
     }
-
   }
 
 
@@ -162,14 +191,23 @@ class App extends React.Component {
         if (this.state.error) return (
           <div>
             <div className="error">Please retry, could not get results from database for previous game selection</div>
-            <GameSettings handleSubmit={this.handleSubmitSettings} isMultiplayer={false} />
+            <GameSettings handleSubmit={this.handleSingleSubmit} isMultiplayer={false} />
           </div>
         )
-        return <GameSettings handleSubmit={this.handleSubmitSettings} isMultiplayer={false} />;
+        return <GameSettings handleSubmit={this.handleSingleSubmit} isMultiplayer={false} />;
       }
     }
     else if (this.state.mode === 'multi') {
-      return <MultiLobby username={this.state.username}/>
+      if (!this.state.creatingLobby) return <MultiLobby username={this.state.username} updateState={this.updateState} />
+      else {
+        if (this.state.error) return (
+          <div>
+            <div className="error">Please retry, could not get results from database for previous game selection</div>
+            <GameSettings handleSubmit={this.handleMultiSubmit} isMultiplayer={true} />
+          </div>
+        )
+        return <GameSettings handleSubmit={this.handleMultiSubmit} isMultiplayer={true} />;
+      }
     }
   }
 }

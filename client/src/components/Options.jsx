@@ -19,9 +19,9 @@ class Options extends React.Component {
     return (
       <div>
         {this.props.options.map((option, i) => (
-          <div className="options">
+          <div className="options" key={i}>
             <label>
-              <input className="option-radio" type="radio" value={option} key={i} name="options" onChange={this.handleChange} checked={this.state.selected == option}></input>
+              <input className="option-radio" type="radio" value={option} name="options" onChange={this.handleChange} checked={this.state.selected == option}></input>
               {option}
             </label>
           </div>

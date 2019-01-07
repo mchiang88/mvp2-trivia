@@ -47,7 +47,7 @@ class GameSettings extends React.Component {
           <input
             type="number"
             name="max_players"
-            min="1"
+            min="2"
             max="4"
             value={this.state.max_players}
             onChange={this.handleChange}>
@@ -59,7 +59,7 @@ class GameSettings extends React.Component {
   render() {
     return (
       <div>
-        <h3>Game Settings:</h3>
+        <h3>{this.props.isMultiplayer ? "Multiplayer" : "Single Player"} Game Settings:</h3>
         <form onSubmit={this.disableEnter}>
           <label htmlFor="trivia_amount">Number of Questions (Max = 50):</label>
           &nbsp;&nbsp;
@@ -115,7 +115,7 @@ class GameSettings extends React.Component {
 
           {this.checkMultiplayer(this.props.isMultiplayer)}
           <br /><br />
-          <button className="start" onClick={() => this.props.handleSubmit(this.state)}>Start game</button>
+          <button className="start" onClick={() => this.props.handleSubmit(this.state)}>{this.props.isMultiplayer ? "Create Lobby" : "Start Game"}</button>
         </form>
       </div>)
   }

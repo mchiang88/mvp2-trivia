@@ -7,9 +7,11 @@ class MultiLobby extends React.Component {
     super(props);
     
     const socket = io();
+    props.updateState('socket', socket);
     // socket.on('timer', (time) => console.log(time));
+    
     socket.emit('subscribeTimer', 5000);
-    socket.emit('createUser', props.username);
+    // socket.emit('createUser', props.username);
     
     // const nspsocket = io('/lobbies');
     
@@ -28,7 +30,6 @@ class MultiLobby extends React.Component {
   populateLobbies() {
     let lobbiesArray = [];
     for (let lobby in this.state.lobbies) {
-      console.log(lobby)
       lobbiesArray.push(<LobbyListItem lobby={this.state.lobbies[lobby]} key={lobby}/>)
     }
     return lobbiesArray;
@@ -38,6 +39,10 @@ class MultiLobby extends React.Component {
     return (
       <div>
         Multiplayer Lobby
+        <br />
+        <button className="createlobby" onClick={() => {
+          this.props.updateState('creatingLobby', true)
+        }}>Create Lobby</button>
 
         <h3>Available Lobbies</h3>
         {this.populateLobbies()}
