@@ -136,7 +136,10 @@ class App extends React.Component {
       currentQuestion: '',
       currentOptions: [],
       submissions: [],
-      selected: ''
+      selected: '',
+      error: false,
+      creatingLobby: false,
+      inLobby: false
     });
   }
 
@@ -198,7 +201,10 @@ class App extends React.Component {
       }
     }
     else if (this.state.mode === 'multi') {
-      if (!this.state.creatingLobby) return <MultiLobby username={this.state.username} updateState={this.updateState} />
+      if (!this.state.creatingLobby) {
+        if (!this.state.inLobby) return <MultiLobby username={this.state.username} updateState={this.updateState} />
+        // else if (this.state.inLobby === 'host') 
+      }
       else {
         if (this.state.error) return (
           <div>
