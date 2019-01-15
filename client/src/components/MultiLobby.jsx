@@ -25,12 +25,20 @@ class MultiLobby extends React.Component {
     this.state = {
       lobbies: {}
     }
+
+    this.joinLobby = this.joinLobby.bind(this);
+  }
+
+  joinLobby(gameId) {
+    const socketLobby = io(`/${gameId}`);
+    props.updateState('socketLobby', socketLobby);
+    // console.log(gameId);
   }
 
   populateLobbies() {
     let lobbiesArray = [];
     for (let lobby in this.state.lobbies) {
-      lobbiesArray.push(<LobbyListItem lobby={this.state.lobbies[lobby]} key={lobby}/>)
+      lobbiesArray.push(<LobbyListItem lobby={this.state.lobbies[lobby]} key={lobby} joinLobby={this.joinLobby} />)
     }
     return lobbiesArray;
   }

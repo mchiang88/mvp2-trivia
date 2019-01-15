@@ -6,6 +6,7 @@ import MultiLobby from './MultiLobby';
 import GameSettings from './GameSettings';
 import Game from './Game';
 import ResultScreen from './ResultScreen';
+import GameLobby from './GameLobby';
 
 import entities from './entities';
 
@@ -17,6 +18,7 @@ class App extends React.Component {
     this.state = {
       username: '',
       socket: false,
+      socketLobby: false,
       mode: false,
       creatingLobby: false,
       inLobby: false,
@@ -94,7 +96,7 @@ class App extends React.Component {
             gameStarted: true
           }, this.updateOptions)}
       })
-      .catch(err => console.error(err))
+      .catch(err => console.error(err));
   }
 
   handleMultiSubmit(settings) {
@@ -107,6 +109,7 @@ class App extends React.Component {
 
     this.state.socket.on('createdLobby', (lobby) => {
       this.setState({
+        socketLobby: io(`/${lobby.gameId}`),
         error: false,
         creatingLobby: false,
         inLobby: 'host'
@@ -175,6 +178,7 @@ class App extends React.Component {
 
   render() {
     if (!this.state.mode) return <ModeSelect username={this.state.username} setMode={this.setMode} handleChange={this.handleChange}/>;
+
     else if (this.state.mode === 'single') {
       if (this.state.gameStarted) {
         if (this.state.gameEnded) {
@@ -200,10 +204,14 @@ class App extends React.Component {
         return <GameSettings handleSubmit={this.handleSingleSubmit} isMultiplayer={false} />;
       }
     }
+
     else if (this.state.mode === 'multi') {
       if (!this.state.creatingLobby) {
         if (!this.state.inLobby) return <MultiLobby username={this.state.username} updateState={this.updateState} />
-        // else if (this.state.inLobby === 'host') 
+        else if (this.state.inLobby) {
+          if (this.state.inLobby === 'host') return <GameLobby host={true} />
+          else return <GameLobby host={false} />
+        }
       }
       else {
         if (this.state.error) return (

@@ -4,7 +4,7 @@ const LobbyListItem = (props) => {
 
   return (
     <div className="lobbyitem">
-      <button className="joingame">Join</button>
+      <button className="joingame" onClick={() => props.joinLobby(props.lobby.gameId)}>Join</button>
       <p><b>Host:</b> {props.lobby.creator}</p>
       <p><b>Players:</b> {props.lobby.players.length + 1} / {props.lobby.maxPlayers}</p>
       <p><b>Time per question:</b> {props.lobby.time_per_question} seconds</p>

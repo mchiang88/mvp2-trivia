@@ -21,40 +21,48 @@ app.use('/api', router);
 
 const server = app.listen(port, () => console.log(`server listening on ${port}`));
 
+
 // HANDLING GAMES & USERS
 const usersList = [];
 let gameId = 678;
 
 const openLobbies = {
   123: {
+    gameId: 123,
     creator: 'Benjo',
     players: [],
     nQuestions: 5,
     difficulty: 'hard',
     category: 'any',
     time_per_question: 30,
-    maxPlayers: 4
+    maxPlayers: 4,
+    questions: []
   },
   abdie3: {
+    gameId: 'abdie3',
     creator: 'Frankie',
     players: ['Todd', 'Joe'],
     nQuestions: 5,
     difficulty: 'any',
     category: 'any',
     time_per_question: 10,
-    maxPlayers: 4
+    maxPlayers: 4,
+    questions: []
   },
   345: {
+    gameId: 345,
     creator: 'John',
     players: [],
     nQuestions: 5,
     difficulty: 'easy',
     category: 'any',
     time_per_question: 5,
-    maxPlayers: 2
+    maxPlayers: 2,
+    questions: []
   }
 };
-const currentGames = [];
+
+const socketLobbies = {};
 
 
 // SOCKET SETUP
@@ -81,62 +89,72 @@ io.on('connection', client => {
     }, interval);
   });
 
-  client.on('createLobby', ({ 
-    trivia_amount: nQuestions, 
-    trivia_category: category, 
-    trivia_difficulty: difficulty,
-    max_players: maxPlayers,
-    time_per_question,
-    username: username
-  }) => {
-    let url = `https://opentdb.com/api.php?amount=${nQuestions}`;
-    if (category !== 'any') url += `&category=${category}`;
-    if (difficulty !== 'any') url += `&difficulty=${difficulty}`;
-    url += '&type=multiple';
+  client.on('createLobby', 
+    ({ 
+      trivia_amount: nQuestions, 
+      trivia_category: category, 
+      trivia_difficulty: difficulty,
+      max_players: maxPlayers,
+      time_per_question,
+      username: username
+    }) => {
+      let url = `https://opentdb.com/api.php?amount=${nQuestions}`;
+      if (category !== 'any') url += `&category=${category}`;
+      if (difficulty !== 'any') url += `&difficulty=${difficulty}`;
+      url += '&type=multiple';
 
-    axios.get(url)
-      .then(data => {
-        const replacer = match => {
-          if (entities[match]) return entities[match];
-          else console.log(match);
-        };
+      axios.get(url)
+        .then(data => {
+          const replacer = match => {
+            if (entities[match]) return entities[match];
+            else console.log(match);
+          };
 
-        if (data.data.response_code === 1 || data.data.response_code === 2) {
-          io.sockets.connected[`${client.id}`].emit('apiError');
-        }
-        else {
-          let questions = data.data.results;
-
-          questions.forEach((item) => {
-            item.incorrect_answers.forEach((inc, ii) => {
-              item.incorrect_answers[ii] = inc.replace(/&#?\w+;/g, replacer);
-            item.question = item.question.replace(/&#?\w+;/g, replacer);
-            item.correct_answer = item.correct_answer.replace(/&#?\w+;/g, replacer);
-            });
-          });
-
-          gameId += 1;
-
-          openLobbies[gameId] = {
-            creator: username,
-            players: [],
-            nQuestions,
-            difficulty,
-            category,
-            time_per_question,
-            maxPlayers,
-            questions
+          if (data.data.response_code === 1 || data.data.response_code === 2) {
+            io.sockets.connected[`${client.id}`].emit('apiError');
           }
-          
-          io.sockets.connected[`${client.id}`].emit('createdLobby', openLobbies[gameId]);
-          io.emit('lobbylist', openLobbies);
-        }
-      })
-      .catch(err => console.error(err))
+          else {
+            let questions = data.data.results;
+
+            questions.forEach((item) => {
+              item.incorrect_answers.forEach((inc, ii) => {
+                item.incorrect_answers[ii] = inc.replace(/&#?\w+;/g, replacer);
+              item.question = item.question.replace(/&#?\w+;/g, replacer);
+              item.correct_answer = item.correct_answer.replace(/&#?\w+;/g, replacer);
+              });
+            });
+
+            gameId += 1;
+
+            openLobbies[gameId] = {
+              gameId,
+              creator: username,
+              players: [],
+              nQuestions,
+              difficulty,
+              category,
+              time_per_question,
+              maxPlayers,
+              questions
+            }
+            
+            io.sockets.connected[`${client.id}`].emit('createdLobby', openLobbies[gameId]);
+            io.emit('lobbylist', openLobbies);
+
+            socketLobbies[gameId] = io.of(`/${gameId}`);
+
+            socketLobbies[gameId].on('connection', client => {
+              console.log(`player has joined lobby`);
+            })
+          }
+        })
+        .catch(err => console.error(err));
   });
 
   
 });
+
+
 
 // const nsp = io.of('/lobbies');
 
